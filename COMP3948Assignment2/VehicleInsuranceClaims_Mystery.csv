@@ -1,0 +1,5 @@
+Maker,Model,Adv_year,Adv_month,Color,Reg_year,Bodytype,Runned_Miles,Engin_size,Gearbox,Fuel_type,Price,Seat_num,Door_num,issue,issue_id,Adv_day,breakdown_date,repair_complexity,repair_cost,repair_hours,category_anomaly,repair_date
+Chevrolet,Spark,2018,4,Silver,2013,Hatchback,46000,1.0L,Manual,Petrol,2995,5,5,Flat Tyres,0,6,4/6/18,1,20.8985,1,0,4/6/18
+Chevrolet,Spark,2018,5,Silver,2013,Hatchback,43961,1.2L,Manual,Petrol,3998,5,5,Excessive Emissions,0,4,5/4/18,1,23.5982,1,0,5/4/18
+Fiat,500,2018,4,Red,2016,Hatchback,20341,1.2L,Manual,Petrol,6900,4,3,Excessive Emissions,0,2,4/2/18,1,26.21,1,0,4/2/18
+Dacia,Duster,2018,8,White,2014,SUV,41861,1.5L,Manual,Diesel,6300,5,5,Windscreen Crack,0,22,8/22/18,1,23.78,1,0,8/22/18
