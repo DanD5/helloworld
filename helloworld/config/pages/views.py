@@ -1,14 +1,15 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, HttpResponseRedirect
 from django.http import Http404
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+from .models import Item, ToDoList
+from django.contrib.auth import logout
+
 
 def homePageView(request):
     return render(request, 'home.html', {
-        'mynumbers':[1,2,3,4,5,6,],
+        'mynumbers': [1, 2, 3, 4, 5, 6, ],
         'firstName': 'Dan',
         'lastName': 'Didac'})
 
@@ -20,6 +21,7 @@ def danPageView(request):
     return render(request, 'dan.html')
 
 import pdb
+
 def homePost(request):
     # Use request object to extract choice.
 
@@ -56,7 +58,7 @@ import pandas as pd
 def results(request, choice, gmat):
     print("*** Inside reults()")
     # load saved model
-    with open('../model_pkl' , 'rb') as f:
+    with open('../model_pkl', 'rb') as f:
         loadedModel = pickle.load(f)
 
     # Create a single prediction.
@@ -65,13 +67,55 @@ def results(request, choice, gmat):
     workExperience = float(choice)
     print("*** GMAT Score: " + str(gmat))
     print("*** Years experience: " + str(workExperience))
-    singleSampleDf = singleSampleDf._append({'gmat':gmat,
-                                            'work_experience':workExperience},
-                                        ignore_index=True)
+    singleSampleDf = singleSampleDf._append({'gmat': gmat,
+                                             'work_experience': workExperience},
+                                            ignore_index=True)
 
     singlePrediction = loadedModel.predict(singleSampleDf)
 
     print("Single prediction: " + str(singlePrediction))
 
-    return render(request, 'results.html', {'choice': workExperience, 'gmat':gmat,
-                'prediction':singlePrediction})
+    return render(request, 'results.html', {'choice': workExperience, 'gmat': gmat,
+                                            'prediction': singlePrediction})
+
+def todos(request):
+    print("*** Inside todos()")
+    items = Item.objects
+    itemErrandDetail = items.select_related('todolist')
+    print(itemErrandDetail[0].todolist.name)
+    return render(request, 'ToDoItems.html',
+                  {'ToDoItemDetail': itemErrandDetail})
+
+from django.shortcuts import render, redirect
+from .forms import RegisterForm
+
+def register(response):
+    # Handle POST request.
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(reverse('message',
+                                                kwargs={'msg': "Your are registered.", 'title': "Success!"}, ))
+
+    # Handle GET request.
+    else:
+        form = RegisterForm()
+    return render(response, "registration/register.html", {"form": form})
+
+def message(request, msg, title):
+    return render(request, 'message.html', {'msg': msg, 'title': title})
+
+@require_POST
+def logoutView(request):
+    logout(request)
+    print("*****  You are logged out.")
+    return HttpResponseRedirect(reverse('home'))
+
+def secretArea(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('message',
+               kwargs={'msg': "Please login to access this page.",
+                       'title': "Login required."}, ))
+    return render(request, 'secret.html', {'useremail': request.user.email })
